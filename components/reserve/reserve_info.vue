@@ -35,7 +35,6 @@
 		},
 		methods: {
 			routeClick() {
-			    console.log('被点击了....', this.routePath)
 			    uni.navigateTo({
 			        url: this.routePath
 				});

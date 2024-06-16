@@ -8,7 +8,7 @@
     <view class="form">
       <view class="form-item">
         <text class="label"><text class="star">*</text> 游客姓名</text>
-        <input class="input" v-model="formData.reserve_name" placeholder="请输入姓名" />
+        <input class="input" v-model="formData.reserveName" placeholder="请输入姓名" />
       </view>
       <view class="form-item">
         <text class="label"><text class="star">*</text> 游客性别</text>
@@ -19,7 +19,7 @@
       </view>
       <view class="form-item">
         <text class="label"><text class="star">*</text> 游客手机号</text>
-        <input class="input" v-model="formData.reserve_phone" placeholder="请输入手机号" />
+        <input class="input" v-model="formData.reservePhone" placeholder="请输入手机号" />
       </view>
       <view class="form-item">
         <text class="label"><text class="star">*</text> 预计通行日期</text>
@@ -41,13 +41,13 @@
         <text class="label"><text class="star">*</text> 游客证件类型</text>
         <picker mode="selector" :range="idTypes" :value="idTypeIndex" @change="handleIdTypeChange">
           <view class="picker">
-            {{ formData.reserve_door || '请选择证件类型' }}
+            {{ formData.documents || '请选择证件类型' }}
           </view>
         </picker>
       </view>
       <view class="form-item">
         <text class="label"><text class="star">*</text> 游客证件号码</text>
-        <input class="input" v-model="formData.reserve_card" placeholder="请输入证件号码" />
+        <input class="input" v-model="formData.reserveCard" placeholder="请输入证件号码" />
       </view>
       <view class="form-item">
         <text class="label"><text class="star">*</text> 请录入人脸信息</text>
@@ -66,23 +66,24 @@
   </view>
 </template>
 
-<script>
+<script>	
 export default {
   data() {
     return {
       formData: {
-        reserve_name: '秦振凯',
-        reserve_sex: '男',
-        reserve_phone: '1577719120',
+        reserveName: '秦振凯',
+        reserveSex: true,
+        reservePhone: '15777191121',
         visitDate: '2024-06-16',
-        reserve_door: '中华人民共和国居民身份证',
-        reserve_card: '450703200110123376',
+        documents: '中华人民共和国居民身份证',
+        reserveCard: '450703200110123376',
         portrait: '/static/马总.jpg',
         gate: '东门',
 		period: '08:00~16:00',
-		reserve_group: '0',
-		start_datetime: '',
-		end_datetime: ''
+		reserveGroup: false,
+		startDatetime: '',
+		endDatetime: '',
+		reserveDoor: 1
       },
       idTypes: ['中华人民共和国居民身份证', '护照', '军官证'],
       gateOptions: ['东门', '西门', '南门', '北门'],
@@ -94,7 +95,8 @@ export default {
   },
   methods: {
 	setSex(sex){
-	  this.formData.reserve_sex = sex;
+	  console.log(sex == '男' ? true : false);
+	  this.formData.reserveSex = sex;
 	},
 	goBack() {
 	  uni.navigateBack();
@@ -110,12 +112,14 @@ export default {
 	handleIdTypeChange(event) {
 	  const index = event.target.value;
 	  this.idTypeIndex = index;
-	  this.formData.reserve_door = this.idTypes[index];
+	  this.formData.documents = this.idTypes[index];
 	},
 	handleGateChange(event) {
 	  const index = event.target.value;
 	  this.gateIndex = index;
 	  this.formData.gate = this.gateOptions[index];
+	  this.formData.reserveDoor = index;
+	  this.reserveDoor = index + 1;
 	},
 	submitForm() {
 	  if (!this.isValidPhoneNumber()) {
@@ -123,7 +127,7 @@ export default {
 			  title: '错误',
 			  content: '手机号错误, 请重新填写!'
 		  });
-		  this.formData.reserve_phone = '';
+		  this.formData.reservePhone = '';
 		  return;  
 	  }
 	  if (!this.isValidIDCard()) {
@@ -131,7 +135,7 @@ export default {
 		  			  title: '错误',
 		  			  content: '身份证号错误, 请重新填写!'
 		  });
-		  this.formData.reserve_card = '';
+		  this.formData.reserveCard = '';
 		  return;
 	  }
 	  if (!this.isValidChineseName()) {
@@ -139,13 +143,41 @@ export default {
 			  title: '错误',
 			  content: '名字错误, 请重新填写!'
 		  });
-		  this.formData.reserve_name = '';
+		  this.formData.reserveName = '';
 		  return;
 	  }
-		
+	  
+	  let startS = this.formData.period.split("~")[0] + ':00';
+	  let endS = this.formData.period.split("~")[1] + ':00';
+	
+	 this.formData.startDatetime = this.formData.visitDate + ' ' + startS;
+	 this.formData.endDatetime = this.formData.visitDate + ' ' + endS;
+	
+	  // this.formData.startDatetime = this.form.visitDate + ' ' + startS;
+	  // this.formData.endDatetime = this.form.visitDate + ' ' + endS;
+	  
+	  
 	  console.log(this.formData);
-	  
-	  
+	  const tmp = this.formData;
+	  uni.request({
+		url: 'http://localhost:8000/reserve/api/reserve',
+		method: "POST",
+		data: {
+			reserveGroup: tmp.reserveGroup,
+			reserveName: tmp.reserveName,
+			reserveSex: tmp.reserveSex,
+			reservePhone: tmp.reservePhone,
+			reserveCard: tmp.reserveCard,
+			reserveDoor: tmp.reserveDoor,
+			startDatetime: tmp.startDatetime,
+			endDatetime: tmp.endDatetime,
+			portrait: tmp.portrait
+		},
+		success: (res) => {
+			// TODO 写完行人预约
+			console.log('asdada:', res.data);
+		}
+	  })
 	  
 	  // TODO 提交 转页面  后续开发, 验证提交次数，防止一个设备多次提交
 	  
@@ -163,14 +195,14 @@ export default {
 	// 手机号验证
 	isValidPhoneNumber() {
 		const regex = /^1[3-9]\d{9}$/;
-		console.log(this.formData.reserve_phone, regex.test(this.formData.reserve_phone));
-		return regex.test(this.formData.reserve_phone);
+		// console.log(this.formData.reservePhone, regex.test(this.formData.reservePhone));
+		return regex.test(this.formData.reservePhone);
 	},
 	// 身份证验证
 	isValidIDCard() {
 		const regex = /^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])\d{3}(\d|X)$/i;
 		
-		if (!regex.test(this.formData.reserve_card)) {
+		if (!regex.test(this.formData.reserveCard)) {
 		    return false; // 格式不正确
 		}
 		
@@ -183,19 +215,19 @@ export default {
 		 // 计算校验码
 		let sum = 0;
 		for (let i = 0; i < 17; i++) {
-			sum += parseInt(this.formData.reserve_card.charAt(i), 10) * factor[i];
+			sum += parseInt(this.formData.reserveCard.charAt(i), 10) * factor[i];
 		}
 		
 		let checkCode = parity[sum % 11];
 		
 		// 比较计算出的校验码和身份证最后一位
-		return checkCode === this.formData.reserve_card.toUpperCase().charAt(17);
+		return checkCode === this.formData.reserveCard.toUpperCase().charAt(17);
 	},
 	// 姓名验证
 	isValidChineseName() {
 	  // 正则表达式，匹配1-3个中文汉字组成的字符串
 	  const regex = /^[\u4e00-\u9fa5]{2,5}$/;
-	  return regex.test(this.formData.reserve_name);
+	  return regex.test(this.formData.reserveName);
 	}
   }
 };
