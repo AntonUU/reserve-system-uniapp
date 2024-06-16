@@ -7,66 +7,59 @@
     <view class="welcome">西大欢迎您的来访</view>
     <view class="form">
       <view class="form-item">
-        <text class="label">* 游客姓名</text>
-        <input class="input" v-model="formData.name" placeholder="请输入姓名" />
+        <text class="label"><text class="star">*</text> 游客姓名</text>
+        <input class="input" v-model="formData.reserve_name" placeholder="请输入姓名" />
       </view>
       <view class="form-item">
-        <text class="label">* 游客性别</text>
-        <radio-group v-model="formData.gender" class="radio-group">
-          <radio value="男">男</radio>
-          <radio value="女">女</radio>
+        <text class="label"><text class="star">*</text> 游客性别</text>
+        <radio-group class="radio-group">
+          <radio value="男" @click="setSex('男')" checked>男</radio>
+          <radio value="女"  @click="setSex('女')">女</radio>
         </radio-group>
       </view>
       <view class="form-item">
-        <text class="label">* 游客手机号</text>
-        <input class="input" v-model="formData.phone" placeholder="请输入手机号" />
+        <text class="label"><text class="star">*</text> 游客手机号</text>
+        <input class="input" v-model="formData.reserve_phone" placeholder="请输入手机号" />
       </view>
       <view class="form-item">
-        <text class="label">* 预计通行日期</text>
-        <picker mode="date" v-model="formData.visitDate">
+        <text class="label"><text class="star">*</text> 预计通行日期</text>
+        <picker mode="date" :value="formData.visitDate" @change="handleDateChange">
           <view class="picker">
             {{ formData.visitDate || '请选择预计通行日期' }}
           </view>
         </picker>
       </view>
       <view class="form-item">
-        <text class="label">* 预计进入时间段</text>
-        <picker mode="time" v-model="formData.visitTime">
+        <text class="label"><text class="star">*</text> 预计进入时间段</text>
+		<picker mode="selector" :range="times" :value="timeTypeIndex" @change="handleTimesTypeChange">
+		  <view class="picker">
+		    {{ formData.period || '请选择时间段' }}
+		  </view>
+		</picker>
+      </view>
+      <view class="form-item">
+        <text class="label"><text class="star">*</text> 游客证件类型</text>
+        <picker mode="selector" :range="idTypes" :value="idTypeIndex" @change="handleIdTypeChange">
           <view class="picker">
-            {{ formData.visitTime || '请选择预计进入时间段' }}
+            {{ formData.reserve_door || '请选择证件类型' }}
           </view>
         </picker>
       </view>
       <view class="form-item">
-        <text class="label">* 游客证件类型</text>
-        <picker mode="selector" :range="idTypes" v-model="formData.idType">
-          <view class="picker">
-            {{ formData.idType || '请选择证件类型' }}
-          </view>
-        </picker>
+        <text class="label"><text class="star">*</text> 游客证件号码</text>
+        <input class="input" v-model="formData.reserve_card" placeholder="请输入证件号码" />
       </view>
       <view class="form-item">
-        <text class="label">* 游客证件号码</text>
-        <input class="input" v-model="formData.idNumber" placeholder="请输入证件号码" />
+        <text class="label"><text class="star">*</text> 请录入人脸信息</text>
+        <image class="face-image" src="/static/马总.jpg" />
       </view>
       <view class="form-item">
-        <text class="label">* 请录入人脸信息</text>
-        <image class="face-image" :src="formData.faceImage || '/static/default_face.png'" @click="uploadFaceImage" />
-      </view>
-      <view class="form-item">
-        <text class="label">* 进出校门</text>
-        <picker mode="selector" :range="gateOptions" v-model="formData.gate">
+        <text class="label"><text class="star">*</text> 进出校门</text>
+        <picker mode="selector" :range="gateOptions" :value="gateIndex" @change="handleGateChange">
           <view class="picker">
             {{ formData.gate || '请选择进出校门' }}
           </view>
         </picker>
-      </view>
-      <view class="form-item">
-        <text class="label">* 图形校验</text>
-        <image class="captcha-image" :src="captchaImage" @click="refreshCaptcha" />
-      </view>
-      <view class="form-item">
-        <input class="input" v-model="formData.captcha" placeholder="请输入验证码" />
       </view>
       <button class="submit-button" @click="submitForm">申请</button>
     </view>
@@ -78,36 +71,132 @@ export default {
   data() {
     return {
       formData: {
-        name: '',
-        gender: '男',
-        phone: '',
-        visitDate: '',
-        visitTime: '',
-        idType: '中华人民共和国居民身份证',
-        idNumber: '',
-        faceImage: '',
-        gate: '',
-        captcha: '',
+        reserve_name: '秦振凯',
+        reserve_sex: '男',
+        reserve_phone: '1577719120',
+        visitDate: '2024-06-16',
+        reserve_door: '中华人民共和国居民身份证',
+        reserve_card: '450703200110123376',
+        portrait: '/static/马总.jpg',
+        gate: '东门',
+		period: '08:00~16:00',
+		reserve_group: '0',
+		start_datetime: '',
+		end_datetime: ''
       },
       idTypes: ['中华人民共和国居民身份证', '护照', '军官证'],
       gateOptions: ['东门', '西门', '南门', '北门'],
-      captchaImage: '/static/captcha.png'
+      idTypeIndex: 0,
+      gateIndex: 0,
+	  times: ['08:00~16:00', '12:00~20:00', '15:00~22:00'],
+	  timeTypeIndex: 0
     };
   },
   methods: {
-    goBack() {
-      uni.navigateBack();
-    },
-    uploadFaceImage() {
-      // 上传人脸图片逻辑
-    },
-    refreshCaptcha() {
-      // 刷新验证码逻辑
-    },
-    submitForm() {
-      // 提交表单逻辑
-      console.log(this.formData);
-    }
+	setSex(sex){
+	  this.formData.reserve_sex = sex;
+	},
+	goBack() {
+	  uni.navigateBack();
+	},
+	handleDateChange(event) {
+	  this.formData.visitDate = event.target.value;
+	},
+	handleTimesTypeChange(event){
+		const index = event.target.value;
+		this.timeTypeIndex = index;
+		this.formData.period = this.times[index];
+	},
+	handleIdTypeChange(event) {
+	  const index = event.target.value;
+	  this.idTypeIndex = index;
+	  this.formData.reserve_door = this.idTypes[index];
+	},
+	handleGateChange(event) {
+	  const index = event.target.value;
+	  this.gateIndex = index;
+	  this.formData.gate = this.gateOptions[index];
+	},
+	submitForm() {
+	  if (!this.isValidPhoneNumber()) {
+		  this.errorIdea({
+			  title: '错误',
+			  content: '手机号错误, 请重新填写!'
+		  });
+		  this.formData.reserve_phone = '';
+		  return;  
+	  }
+	  if (!this.isValidIDCard()) {
+		  this.errorIdea({
+		  			  title: '错误',
+		  			  content: '身份证号错误, 请重新填写!'
+		  });
+		  this.formData.reserve_card = '';
+		  return;
+	  }
+	  if (!this.isValidChineseName()) {
+		  this.errorIdea({
+			  title: '错误',
+			  content: '名字错误, 请重新填写!'
+		  });
+		  this.formData.reserve_name = '';
+		  return;
+	  }
+		
+	  console.log(this.formData);
+	  
+	  
+	  
+	  // TODO 提交 转页面  后续开发, 验证提交次数，防止一个设备多次提交
+	  
+	},
+	errorIdea(info){
+		uni.showModal({
+			  title: info.title || '错误',
+			  content: info.content || '填写错了, 请重新输入!',
+			  showCancel: info.showCancel || false
+		});
+	},
+	
+	
+	// 验证
+	// 手机号验证
+	isValidPhoneNumber() {
+		const regex = /^1[3-9]\d{9}$/;
+		console.log(this.formData.reserve_phone, regex.test(this.formData.reserve_phone));
+		return regex.test(this.formData.reserve_phone);
+	},
+	// 身份证验证
+	isValidIDCard() {
+		const regex = /^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])\d{3}(\d|X)$/i;
+		
+		if (!regex.test(this.formData.reserve_card)) {
+		    return false; // 格式不正确
+		}
+		
+		// 身份证前17位数字本体码加权因子
+		const factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+	  
+		// 身份证前17位数字本体码对应的校验码字符
+		const parity = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+		
+		 // 计算校验码
+		let sum = 0;
+		for (let i = 0; i < 17; i++) {
+			sum += parseInt(this.formData.reserve_card.charAt(i), 10) * factor[i];
+		}
+		
+		let checkCode = parity[sum % 11];
+		
+		// 比较计算出的校验码和身份证最后一位
+		return checkCode === this.formData.reserve_card.toUpperCase().charAt(17);
+	},
+	// 姓名验证
+	isValidChineseName() {
+	  // 正则表达式，匹配1-3个中文汉字组成的字符串
+	  const regex = /^[\u4e00-\u9fa5]{2,5}$/;
+	  return regex.test(this.formData.reserve_name);
+	}
   }
 };
 </script>
@@ -155,14 +244,14 @@ export default {
 
 .label {
   display: block;
-  font-size: 16px;
+  font-size: 13px;
   margin-bottom: 5px;
 }
 
 .input {
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
+  width: 90%;
+  padding: 7px;
+  font-size: 13px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -176,7 +265,7 @@ export default {
 }
 
 .picker {
-  width: 100%;
+  width: 90%;
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ddd;
@@ -207,5 +296,14 @@ export default {
   border-radius: 5px;
   margin-top: 20px;
   cursor: pointer;
+}
+
+.star {
+	color: red;
+}
+
+.picker::after {
+  content: attr(value);
+  font-size: 18px; /* 调整字体大小 */
 }
 </style>
