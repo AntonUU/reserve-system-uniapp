@@ -23,13 +23,13 @@
 						title: "车辆预约申请",
 						logoPath: "/static/icon/车辆预约.png",
 						backgroundColor: "#E6A84B",
-						routePath: ""
+						routePath: "cat_reserve"
 					},
 					{
-						title: "预约校园参观申请",
+						title: "预约记录查询",
 						logoPath: "/static/icon/预约.png",
 						backgroundColor: "#72C040",
-						routePath: ""
+						routePath: "search_reserve"
 					},
 				]
 			}
