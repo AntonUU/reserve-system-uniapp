@@ -1,8 +1,7 @@
 <template>
   <view class="container">
     <view class="header">
-      <view class="back" @click="goBack">＜</view>
-      <view class="title">行人预约申请</view>
+      
     </view>
     <view class="welcome">欢迎您的来访</view>
     <view class="form">
@@ -92,15 +91,15 @@ export default {
   data() {
     return {
       formData: {
-        reserveName: '秦振凯',
+        reserveName: '',
         reserveSex: true,
-        reservePhone: '15777191121',
-        visitDate: '2024-06-18',
+        reservePhone: '',
+        visitDate: '',
         documents: '中华人民共和国居民身份证',
-        reserveCard: '450703200110123376',
+        reserveCard: '',
         portrait: '/static/马总.jpg',
         gate: '东门',
-		period: '08:00~16:00',
+		period: '',
 		reserveGroup: false,
 		startDatetime: '',
 		endDatetime: '',
@@ -292,9 +291,7 @@ export default {
 .welcome {
   text-align: center;
   font-size: 18px;
-  color: #fff;
-  background-color: #007aff;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 .form {

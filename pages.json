@@ -1,13 +1,5 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		
-		{
-			"path" : "pages/reserve/search_reserve",
-			"style" : 
-			{
-				"navigationBarTitleText" : "预约记录查询"
-			}
-		},
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -29,6 +21,20 @@
 			}
 		},
 		{
+			"path" : "pages/reserve/cat_reserve",
+			"style" : 
+			{
+				"navigationBarTitleText" : "车辆预约"
+			}
+		},
+		{
+			"path" : "pages/reserve/search_reserve",
+			"style" : 
+			{
+				"navigationBarTitleText" : "预约记录查询"
+			}
+		},
+		{
 			"path" : "pages/reserve/response_ok",
 			"style" : 
 			{
@@ -36,13 +42,12 @@
 			}
 		},
 		{
-			"path" : "pages/reserve/cat_reserve",
+			"path" : "pages/reserve/detail_reseve",
 			"style" : 
 			{
-				"navigationBarTitleText" : "车辆预约"
+				"navigationBarTitleText" : "预约记录查询成功"
 			}
 		}
-		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

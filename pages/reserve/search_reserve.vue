@@ -1,8 +1,6 @@
 <template>
 	<view class="container">
 	  <view class="header">
-	    <view class="back" @click="goBack">＜</view>
-	    <view class="title">行人预约申请</view>
 	  </view>
 	  <view class="welcome">欢迎您的来访</view>
 	  <view class="form">
@@ -94,7 +92,12 @@
 								this.errorIdea({});
 								return;
 							} else {
+								res = res.data;
+								let url = `detail_reseve?reserveName=${res.reserveName}&createTime=${res.createTime}&endDateTime=${res.endDateTime}&reservePhone=${res.reservePhone}&reserveStatus=${res.reserveStatus}&startDateTime=${res.startDateTime}&`;
 								// TODO 页面跳转， 并传送参数
+								 uni.navigateTo({
+									url: url,
+								});
 							}
 						}
 				});
@@ -129,7 +132,7 @@
 .welcome {
   text-align: center;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 .form {

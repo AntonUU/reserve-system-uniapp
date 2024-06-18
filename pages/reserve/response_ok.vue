@@ -1,8 +1,6 @@
 <template>
   <view class="container">
     <view class="header">
-      <view class="back" @click="goBack">＜</view>
-      <view class="title">预约成功</view>
     </view>
     <view class="view-icon">
       <image src="/static/ok.png" class="icon" />

@@ -1,8 +1,6 @@
 <template>
   <view class="container">
     <view class="header">
-      <view class="back" @click="goBack">＜</view>
-      <view class="title">车辆预约申请</view>
     </view>
     <view class="welcome">欢迎您的来访</view>
     <view class="form">
@@ -74,21 +72,21 @@ export default {
   data() {
     return {
       formData: {
-        personName: '秦振凯',
-		catId: '桂A AE86M',
-        personPhone: '15777191121',
-        visitDate: '2024-06-18',
-        gate: '东门',
-		period: '08:00~16:00',
+        personName: '',
+		catId: '',
+        personPhone: '',
+        visitDate: '',
+        gate: '',
+		period: '',
 		startDatetime: '',
 		endDatetime: '',
 		entrance: 1
       },
 	  visitData: {
-		visitName: '秦凯振',
-		visitUnit: '信息部',
+		visitName: '',
+		visitUnit: '',
 		accompanyingNum: 0,
-		visitContext: '找点事做'  
+		visitContext: ''  
 	  },
       gateOptions: ['东门', '西门', '南门', '北门'],
       idTypeIndex: 0,
@@ -161,7 +159,7 @@ export default {
 	  const data = {
 			personName: tmp.personName,
 			personPhone: tmp.personPhone,
-			entrance: tmp.entrance,
+			entrance: (tmp.entrance + 1),
 			startDatetime: tmp.startDatetime,
 			endDatetime: tmp.endDatetime,
 			catId: tmp.catId,
@@ -241,10 +239,9 @@ export default {
 .welcome {
   text-align: center;
   font-size: 18px;
-  color: #fff;
-  background-color: #007aff;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
+
 
 .form {
   background-color: #fff;
